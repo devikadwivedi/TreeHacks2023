@@ -8,8 +8,8 @@ import os
 from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
-UPLOAD_FOLDER = 'static/img_uploads/'
-ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'heic'}
+UPLOAD_FOLDER = 'static/image_uploads/'
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'heic'}
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
@@ -74,16 +74,23 @@ def brand_to_rxcui(brand_name):
 @app.route('/image_to_brand/<image_name>')
 # image to brand
 def image_to_brand(image_name):
-    img = Image.open('static/' + image_name)
+    image_path = UPLOAD_FOLDER + image_name    
+
+    img = Image.open(image_path)
+    #scan barcode
     decoded_list = decode(img)
+    os.remove(image_path)
     parsed_product_upc = str(int(decoded_list[0][0]))
+
+    #get barcode to product from api
     upc_base_url = "https://ean-db.com/api/v1/product/"
     # TODO: make this access code an env var
     headers={ 'Authorization ' : 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjNWYxMDBiZC04YjdiLTQ5MDctODNmMy1kZTk3OGViM2NmODciLCJpc3MiOiJjb20uZWFuLWRiIiwiaWF0IjoxNjc2Njk2NDk2LCJleHAiOjE3MDgyMzI0OTZ9.zxOi9OggcPaHb5cmKuolwNYRry-QL4ICf9Wrou5jHzNaZOhxXexGM8B9JL2JIq4SFo1sxzy9bhVVysa6Eo-hKg'}
-
     r = requests.get(upc_base_url + parsed_product_upc, headers={'Content-Type':'application/json',
                'Authorization': 'Bearer {}'.format('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjNWYxMDBiZC04YjdiLTQ5MDctODNmMy1kZTk3OGViM2NmODciLCJpc3MiOiJjb20uZWFuLWRiIiwiaWF0IjoxNjc2Njk2NDk2LCJleHAiOjE3MDgyMzI0OTZ9.zxOi9OggcPaHb5cmKuolwNYRry-QL4ICf9Wrou5jHzNaZOhxXexGM8B9JL2JIq4SFo1sxzy9bhVVysa6Eo-hKg')})
     response = r.json()
+
+    #if product found, good, if not, error
     try:
         full_product_name = response['product']['titles']['en']
         brand = full_product_name.split(' ')[0]
@@ -96,7 +103,7 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-@app.route('/test_upload', methods=['GET', 'POST'])
+@app.route('/upload_image', methods=['GET', 'POST'])
 def upload_file():
     if request.method == 'POST':
         # check if the post request has the file part
@@ -112,7 +119,8 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return app.config["UPLOAD_FOLDER"] + filename
+            # testing auto branding only : return redirect(url_for('image_to_brand', image_name=filename))
+            return filename
     return '''
     <!doctype html>
     <title>Upload new File</title>
