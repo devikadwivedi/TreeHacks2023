@@ -46,7 +46,6 @@
     } else {
       rxcuiArray.push(rxcui);
       addMedCookie(rxcui, query);
-      console.log(document.cookies);
     }
 
     //3 add to the table and clear search bar
@@ -129,15 +128,29 @@
   }
 
   function parseMedCookie() {
-     let c = document.cookie;
-     let ca = c.split(";");
-     return JSON.parse(ca[1].substring(3));
+     let m = getCookie("m");
+     return JSON.parse(m);
   }
 
   function parseConsentCookie() {
-    let c = document.cookie;
-    let ca = c.split(";");
-    return ca[0].substring(2) == 'true';
+    let c = getCookie("c");
+    return c == 'true';
+  }
+
+  function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i <ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
   }
 
   /**
