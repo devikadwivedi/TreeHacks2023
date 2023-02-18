@@ -2,10 +2,10 @@ from flask import Flask
 import requests
 import json
 from PIL import Image
-from pyzbar.pyzbar import decode
+# from pyzbar.pyzbar import decode
 from flask import render_template
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path="/static")
 
 @app.route("/")
 def hello_world():
@@ -66,19 +66,22 @@ def brand_to_rxcui(brand_name):
     rxcui = response["drugGroup"]['conceptGroup'][1]["conceptProperties"][0]["rxcui"]
     return rxcui
 
-@app.route('/image_to_rxcui/<image_name>')
-# image to brand
-def image_to_brand(image_name):
-    img = Image.open('static/' + image_name)
-    decoded_list = decode(img)
-    parsed_product_upc = str(int(decoded_list[0][0]))
-    upc_base_url = "https://ean-db.com/api/v1/product/"
-    # TODO: make this access code an env var
-    headers={ 'Authorization ' : 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjNWYxMDBiZC04YjdiLTQ5MDctODNmMy1kZTk3OGViM2NmODciLCJpc3MiOiJjb20uZWFuLWRiIiwiaWF0IjoxNjc2Njk2NDk2LCJleHAiOjE3MDgyMzI0OTZ9.zxOi9OggcPaHb5cmKuolwNYRry-QL4ICf9Wrou5jHzNaZOhxXexGM8B9JL2JIq4SFo1sxzy9bhVVysa6Eo-hKg'}
+# @app.route('/image_to_rxcui/<image_name>')
+# # image to brand
+# def image_to_brand(image_name):
+#     img = Image.open('static/' + image_name)
+#     decoded_list = decode(img)
+#     parsed_product_upc = str(int(decoded_list[0][0]))
+#     upc_base_url = "https://ean-db.com/api/v1/product/"
+#     # TODO: make this access code an env var
+#     headers={ 'Authorization ' : 'eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjNWYxMDBiZC04YjdiLTQ5MDctODNmMy1kZTk3OGViM2NmODciLCJpc3MiOiJjb20uZWFuLWRiIiwiaWF0IjoxNjc2Njk2NDk2LCJleHAiOjE3MDgyMzI0OTZ9.zxOi9OggcPaHb5cmKuolwNYRry-QL4ICf9Wrou5jHzNaZOhxXexGM8B9JL2JIq4SFo1sxzy9bhVVysa6Eo-hKg'}
 
-    r = requests.get(upc_base_url + parsed_product_upc, headers={'Content-Type':'application/json',
-               'Authorization': 'Bearer {}'.format('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjNWYxMDBiZC04YjdiLTQ5MDctODNmMy1kZTk3OGViM2NmODciLCJpc3MiOiJjb20uZWFuLWRiIiwiaWF0IjoxNjc2Njk2NDk2LCJleHAiOjE3MDgyMzI0OTZ9.zxOi9OggcPaHb5cmKuolwNYRry-QL4ICf9Wrou5jHzNaZOhxXexGM8B9JL2JIq4SFo1sxzy9bhVVysa6Eo-hKg')})
-    response = r.json()
-    full_product_name = response['product']['titles']['en']
-    brand = full_product_name.split(' ')[0]
-    return brand
+#     r = requests.get(upc_base_url + parsed_product_upc, headers={'Content-Type':'application/json',
+#                'Authorization': 'Bearer {}'.format('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjNWYxMDBiZC04YjdiLTQ5MDctODNmMy1kZTk3OGViM2NmODciLCJpc3MiOiJjb20uZWFuLWRiIiwiaWF0IjoxNjc2Njk2NDk2LCJleHAiOjE3MDgyMzI0OTZ9.zxOi9OggcPaHb5cmKuolwNYRry-QL4ICf9Wrou5jHzNaZOhxXexGM8B9JL2JIq4SFo1sxzy9bhVVysa6Eo-hKg')})
+#     response = r.json()
+#     full_product_name = response['product']['titles']['en']
+#     brand = full_product_name.split(' ')[0]
+#     return brand
+
+if __name__ == "__main__":
+    app.run(debug=True, port=8080)
