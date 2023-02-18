@@ -7,7 +7,7 @@
   window.addEventListener("load", init);
   const BASE_URL = "http://127.0.0.1:5000/";
   let rxcuiArray = [];
-  document.cookie = "c=[]";
+  document.cookie = "c=true;m=[]";
 
   /**
    * sets up necessary functionality when page loads
@@ -49,31 +49,52 @@
 
   }
 
-  function addCookie(rxcui, name, generic) {
-    console.log(document.cookie);
-    console.log(rxcui);
-    let arr = parseCookie();
-    const newMed = {id: arr.length, rxcui: rxcui, name: name, generic: generic};
-    console.log(JSON.stringify(newMed));
-    arr.push(newMed);
-    console.log(JSON.stringify(arr));
-    document.cookie = "c=" + JSON.stringify(arr);
-    console.log(document.cookie);
+
+
+  function addMedCookie(rxcui, name, generic) {
+    if (parseConsentCookie()) {
+        console.log(document.cookie);
+        console.log(rxcui);
+        let arr = parseCookie();
+        const newMed = {id: arr.length, rxcui: rxcui, name: name, generic: generic};
+        console.log(JSON.stringify(newMed));
+        arr.push(newMed);
+        console.log(JSON.stringify(arr));
+        setMedCookie(arr);
+        console.log(document.cookie);
+     }
   }
 
-  function removeCookie(rxcui) {
-    let arr = parseCoookie();
+  function removeMedCookie(rxcui) {
+    let arr = parseMedCookie();
     let newArr = arr.filter(function(e) {return e.rxcui !== rxcui});
-    document.cookie = "c=" + JSON.stringify(newArr);
+    setMedCookie(newArr);
   }
 
-  function removeAllCookies() {
-    document.cookie = "c=[]";
+  function removeAllMedCookie() {
+    setMedCookie([]);
   }
 
-  function parseCookie() {
+  function setMedCookie(arr) {
+    let consent = parseConsentCookie();
+    document.cookie = "c=" + consent + "; med=" + JSON.stringify(arr);
+  }
+
+  function setConsentCookie(consent) {
+    let arr = parseMedCookie();
+    document.cookie = "c=" + consent + "; a=" + JSON.stringify(arr);
+  }
+
+  function parseMedCookie() {
      let c = document.cookie;
-     return JSON.parse(c.substring(2));
+     let ca = c.split(";");
+     return JSON.parse(ca[1].substring(2));
+  }
+
+  function parseConsentCookie() {
+    let c = document.cookie;
+    let ca = c.split(";");
+    return ca[0].substring(2) == 'true';
   }
 
   /**
