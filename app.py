@@ -3,9 +3,14 @@ import requests
 import json
 from PIL import Image
 from pyzbar.pyzbar import decode
-from flask import render_template
+from flask import render_template, Flask, flash, request, redirect, url_for, send_from_directory
+import os
+from werkzeug.utils import secure_filename
 
 app = Flask(__name__)
+UPLOAD_FOLDER = 'static/img_uploads/'
+ALLOWED_EXTENSIONS = {'txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif', 'heic'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 @app.route("/")
 def hello_world():
@@ -66,7 +71,7 @@ def brand_to_rxcui(brand_name):
     rxcui = response["drugGroup"]['conceptGroup'][1]["conceptProperties"][0]["rxcui"]
     return rxcui
 
-@app.route('/image_to_rxcui/<image_name>')
+@app.route('/image_to_brand/<image_name>')
 # image to brand
 def image_to_brand(image_name):
     img = Image.open('static/' + image_name)
@@ -79,6 +84,41 @@ def image_to_brand(image_name):
     r = requests.get(upc_base_url + parsed_product_upc, headers={'Content-Type':'application/json',
                'Authorization': 'Bearer {}'.format('eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJjNWYxMDBiZC04YjdiLTQ5MDctODNmMy1kZTk3OGViM2NmODciLCJpc3MiOiJjb20uZWFuLWRiIiwiaWF0IjoxNjc2Njk2NDk2LCJleHAiOjE3MDgyMzI0OTZ9.zxOi9OggcPaHb5cmKuolwNYRry-QL4ICf9Wrou5jHzNaZOhxXexGM8B9JL2JIq4SFo1sxzy9bhVVysa6Eo-hKg')})
     response = r.json()
-    full_product_name = response['product']['titles']['en']
-    brand = full_product_name.split(' ')[0]
-    return brand
+    try:
+        full_product_name = response['product']['titles']['en']
+        brand = full_product_name.split(' ')[0]
+        return brand
+    except:
+        print(response)
+        return "error"
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+@app.route('/test_upload', methods=['GET', 'POST'])
+def upload_file():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return app.config["UPLOAD_FOLDER"] + filename
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
