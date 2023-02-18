@@ -4,10 +4,10 @@
 
 "use strict";
 (function() {
-
   window.addEventListener("load", init);
   const BASE_URL = "http://127.0.0.1:5000/";
-  let rxcuiArray = []
+  let rxcuiArray = [];
+  document.cookie = "c=[]";
 
   /**
    * sets up necessary functionality when page loads
@@ -18,6 +18,8 @@
     console.log(generateButton);
     generateButton.addEventListener("click", addItem);
   }
+
+
 
   async function addItem() {
     // 1 check if the search bar is empty
@@ -32,18 +34,46 @@
     // make query call to search API. return error if not contained
     let rxcui = await getGenericToRxcui(query);
     // if no rxcui found directly, search brand name
-    if (rxcui == "") {
-      rxcui = await getBrandToRxcui(query)
+    if (rxcui === undefined) {
+      console.log("I am waiting to get the brand to rxcui")
+      rxcui = await getBrandToRxcui(query);
     }
     if (rxcui == "") {
-      console.log("return some error that input not found");
-      return;
     }
+    console.log(document.cookie);
     console.log(rxcui);
     rxcuiArray.push(rxcui);
     console.log(rxcuiArray);
+    addCookie(rxcui, query, false);
     //3 add to the table
 
+  }
+
+  function addCookie(rxcui, name, generic) {
+    console.log(document.cookie);
+    console.log(rxcui);
+    let arr = parseCookie();
+    const newMed = {id: arr.length, rxcui: rxcui, name: name, generic: generic};
+    console.log(JSON.stringify(newMed));
+    arr.push(newMedi);
+    console.log(JSON.stringify(arr));
+    document.cookie = "c=" + JSON.stringify(arr);
+    console.log(document.cookie);
+  }
+
+  function removeCookie(rxcui) {
+    let arr = parseCoookie();
+    let newArr = arr.filter(function(e) {return e.rxcui !== rxcui});
+    document.cookie = "c=" + JSON.stringify(newArr);
+  }
+
+  function removeAllCookies() {
+    document.cookie = "c=[]";
+  }
+
+  function parseCookie() {
+     let c = document.cookie;
+     return JSON.parse(c.substring(2));
   }
 
   /**
@@ -62,7 +92,6 @@
     return rxcui;
   }
 
-
   /**
    * takes the med name query and returns if the brand is found
    * @param {String} type of excuse desired
@@ -79,13 +108,8 @@
     return rxcui;
   }
 
-  function addCookie(rxcuid, name, generic) {
-    let c = document.cookie;
-    let arr = JSON.parse(c.substring(1));
-    const newMedi = {id: arr.length, rxcuid: rxcuid, name: name, generic: generic};
-    arr.push(newMedi);
-    document.cookie = JSON.stringify(arr);
-  }
+
+
 
 
   /**
