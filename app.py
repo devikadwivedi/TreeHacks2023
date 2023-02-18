@@ -89,7 +89,7 @@ def brand_to_rxcui(brand_name):
 @app.route('/image_to_rxcui/<image_name>')
 # able to go from image to rxcui
 def image_to_rxcui(image_name):
-    img = Image.open(image_name)
+    img = Image.open('static/' + image_name)
     decoded_list = decode(img)
     parsed_product_upc = str(int(decoded_list[0][0]))
     upc_base_url = "https://ean-db.com/api/v1/product/"
