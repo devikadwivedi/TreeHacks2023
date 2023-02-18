@@ -44,7 +44,6 @@ def rxcuis_to_interactions(rxcui):
 
 @app.route('/generic_to_rxcui/<generic_name>')
 def generic_to_rxcui(generic_name):
-    rxcuis = ""
     r = requests.get('https://rxnav.nlm.nih.gov/REST/rxcui.json?name=' + generic_name + '&search=1')
 
     if (r.status_code != 200):
@@ -53,8 +52,7 @@ def generic_to_rxcui(generic_name):
     response_json = r.json()
     # if we've already found it, no need to go find it again on the query, just
     # save these jsons/rxcuis and search through them
-    rxcui = response_json['idGroup']['rxnormId'][0]
-    return rxcuis
+    return response_json['idGroup']['rxnormId'][0];
 
 @app.route('/brand_to_rxcui/<brand_name>')
 # brand name to rxcui

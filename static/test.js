@@ -55,7 +55,7 @@
     let arr = parseCookie();
     const newMed = {id: arr.length, rxcui: rxcui, name: name, generic: generic};
     console.log(JSON.stringify(newMed));
-    arr.push(newMedi);
+    arr.push(newMed);
     console.log(JSON.stringify(arr));
     document.cookie = "c=" + JSON.stringify(arr);
     console.log(document.cookie);
