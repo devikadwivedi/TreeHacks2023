@@ -78,6 +78,14 @@
     return rxcui;
   }
 
+  function addCookie(rxcuid, name, generic) {
+    let c = document.cookie;
+    let arr = JSON.parse(c.substring(1));
+    const newMedi = {id: arr.length; rxcuid: rxcuid, name: name, generic: generic};
+    arr.push(newMedi);
+    document.cookie = JSON.stringify(arr);
+  }
+
 
   /**
    * gives the user a helpful message if an error occurs while requesting
