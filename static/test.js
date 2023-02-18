@@ -7,7 +7,10 @@
   window.addEventListener("load", init);
   const BASE_URL = "http://127.0.0.1:5000/";
   let rxcuiArray = [];
-  document.cookie = "c=[]";
+  if (document.cookie == "") {
+    document.cookie = "c=true";
+    document.cookie = "m=[]";
+  }
 
   /**
    * sets up necessary functionality when page loads
@@ -17,8 +20,6 @@
     let generateButton = qs("button");
     generateButton.addEventListener("click", addItem);
   }
-
-
 
   async function addItem() {
     // 1 check if the search bar is empty
@@ -89,9 +90,20 @@
       .catch(handleError);
       console.log("getRxcuiToInteractions returns: " + interaction_set);
       return interaction_set;
+    rxcuiArray.push(rxcui);
+    addMedCookie(rxcui, query, false);
+    //3 add to the table
 
   }
 
+  function addMedCookie(rxcui, name, generic) {
+    if (parseConsentCookie) {
+        let arr = parseMedCookie();
+        const newMed = {rxcui: rxcui, name: name, generic: generic};
+        arr.push(newMed);
+        setMedCookie(arr);
+        console.log(document.cookie);
+    }
   function addCookie(rxcui, name, generic) {
     //console.log(document.cookie);
     //console.log(rxcui);
@@ -104,19 +116,34 @@
     //console.log(document.cookie);
   }
 
-  function removeCookie(rxcui) {
-    let arr = parseCoookie();
+  function removeMedCookie(rxcui) {
+    let arr = parseMedCookie();
     let newArr = arr.filter(function(e) {return e.rxcui !== rxcui});
-    document.cookie = "c=" + JSON.stringify(newArr);
+    setMedCookie(newArr);
   }
 
-  function removeAllCookies() {
-    document.cookie = "c=[]";
+  function removeAllMedCookie() {
+    setMedCookie([]);
   }
 
-  function parseCookie() {
+  function setMedCookie(arr) {
+    document.cookie = "m=" + JSON.stringify(arr);
+  }
+
+  function setConsentCookie(consent) {
+    document.cookie = "c=" + String(consent);
+  }
+
+  function parseMedCookie() {
      let c = document.cookie;
-     return JSON.parse(c.substring(2));
+     let ca = c.split(";");
+     return JSON.parse(ca[1].substring(3));
+  }
+
+  function parseConsentCookie() {
+    let c = document.cookie;
+    let ca = c.split(";");
+    return ca[0].substring(2) == 'true';
   }
 
   /**
