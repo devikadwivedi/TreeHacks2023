@@ -48,11 +48,13 @@
   }
 
   function addMedCookie(rxcui, name, generic) {
-    let arr = parseMedCookie();
-    const newMed = {rxcui: rxcui, name: name, generic: generic};
-    arr.push(newMed);
-    setMedCookie(arr);
-    console.log(document.cookie);
+    if (parseConsentCookie) {
+        let arr = parseMedCookie();
+        const newMed = {rxcui: rxcui, name: name, generic: generic};
+        arr.push(newMed);
+        setMedCookie(arr);
+        console.log(document.cookie);
+    }
   }
 
   function removeMedCookie(rxcui) {
