@@ -7,10 +7,6 @@
   window.addEventListener("load", init);
   const BASE_URL = "http://127.0.0.1:5000/";
   let rxcuiArray = [];
-  if (document.cookie == "") {
-    document.cookie = "c=true";
-    document.cookie = "m=[]";
-  }
 
   /**
    * sets up necessary functionality when page loads
@@ -18,14 +14,20 @@
   function init() {
     // just deal with the instance of adding one item to our table
     let generateButton = qs("button");
-    console.log(generateButton);
     generateButton.addEventListener("click", addItem);
+    //if (document.cookies == "") {
+        document.cookie = "c=true";
+        document.cookie = "m=[]";
+    //}
+    let date = new Date(Date.now());
+    let newDate = date.setFullYear(date.getFullYear() + 1);
+    document.cookie = "expires=" + date.toUTCString();
+    console.log(document.cookie);
   }
 
   async function addItem() {
     // 1 check if the search bar is empty
     let query = qs("input").value;
-    console.log(query)
     if (query == "") {
       return console.log("no input query");
       return;
@@ -35,22 +37,73 @@
     // make query call to search API. return error if not contained
     let rxcui = await getGenericToRxcui(query);
     // if no rxcui found directly, search brand name
-    if (rxcui === undefined) {
+    if (rxcui == "") {
       console.log("I am waiting to get the brand to rxcui")
       rxcui = await getBrandToRxcui(query);
     }
     if (rxcui == "") {
+      console.log("error: medication not found");
+    } else {
+      rxcuiArray.push(rxcui);
+      addMedCookie(rxcui, query);
+      console.log(document.cookies);
     }
+
+    //3 add to the table and clear search bar
+    let added_section = id("added_meds");
+    let new_p = gen("p");
+    new_p = query+ " ";
+    added_section.append(new_p);
+    qs("input").value = "";
+
+    // ask for interactions
+    let rxcuis = "";
+    rxcuiArray.forEach((indiv) => {
+      console.log(indiv);
+      rxcuis += indiv;
+    });
+    //let interaction_set = await getRxcuiToInteractions(rxcuis);
+    if (rxcuiArray.length > 1) {
+      console.log(rxcuiArray);
+      let medication_string = rxcuiArray[0]
+      for (let i = 1; i < rxcuiArray.length; i++) {
+        medication_string += "+" + rxcuiArray[i];
+      }
+      let interaction_set = await getRxcuiToInteractions(medication_string);
+      let interaction_section = id("interactions");
+      if (interaction_set === undefined) {
+        return;
+      }
+      new_p = "" + interaction_set;
+      interaction_section.append(new_p);
+    }
+  }
+
+  async function getRxcuiToInteractions(rxcuis) {
+    let url = BASE_URL + "/rxcuis_to_interactions/" + rxcuis;
+    console.log(url);
+    let interaction_set;
+    await fetch(url)
+      .then(statusCheck)
+      .then(resp => resp.text())
+      .then((resp) => {
+        interaction_set = resp;
+        })
+      .catch(handleError);
+      console.log("getRxcuiToInteractions returns: " + interaction_set);
+      return interaction_set;
     rxcuiArray.push(rxcui);
     addMedCookie(rxcui, query, false);
+    console.log(document.cookies);
     //3 add to the table
 
   }
 
-  function addMedCookie(rxcui, name, generic) {
-    if (parseConsentCookie) {
+  function addMedCookie(rxcui, name) {
+    console.log(parseConsentCookie());
+    if (parseConsentCookie()) {
         let arr = parseMedCookie();
-        const newMed = {rxcui: rxcui, name: name, generic: generic};
+        const newMed = {rxcui: rxcui, query: name};
         arr.push(newMed);
         setMedCookie(arr);
         console.log(document.cookie);
@@ -97,10 +150,12 @@
     await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
-      .then(resp => console.log(resp))
-      .then(resp => rxcui = resp)
+      .then((resp) => {
+        rxcui = resp;
+        })
       .catch(handleError);
-    return rxcui;
+      console.log("genericToRxcui returns: " + rxcui);
+      return rxcui;
   }
 
   /**
@@ -113,15 +168,13 @@
     await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
-      .then(resp => console.log(resp))
-      .then(resp => rxcui = resp)
+      .then((resp) => {
+        rxcui = resp
+        })
       .catch(handleError);
+      console.log("getBrandToRxcui returns: " + rxcui);
     return rxcui;
   }
-
-
-
-
 
   /**
    * gives the user a helpful message if an error occurs while requesting
@@ -139,7 +192,8 @@
    */
   async function statusCheck(res) {
     if (!res.ok) {
-      throw new Error(await res.text());
+      console.log("Server Error: Not Found");
+      return "";
     }
     return res;
   }
