@@ -44,7 +44,7 @@
     console.log(rxcui);
     rxcuiArray.push(rxcui);
     console.log(rxcuiArray);
-    addCookie(rxcui, query, false);
+    addMedCookie(rxcui, query, false);
     //3 add to the table
 
   }
