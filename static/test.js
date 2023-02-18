@@ -53,7 +53,7 @@
   async function getGenericToRxcui(query) {
     let url = BASE_URL + "generic_to_rxcui/" + query;
     let rxcui = ""
-    fetch(url)
+    await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
       .then(resp => console.log(resp))
@@ -70,7 +70,7 @@
   async function getBrandToRxcui(query) {
     let url = BASE_URL + "brand_to_rxcui/" + query;
     let rxcui = ""
-    fetch(url)
+    await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
       .then(resp => console.log(resp))
