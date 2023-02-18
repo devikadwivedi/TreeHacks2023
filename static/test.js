@@ -77,12 +77,12 @@
 
   function setMedCookie(arr) {
     let consent = parseConsentCookie();
-    document.cookie = "c=" + consent + "; med=" + JSON.stringify(arr);
+    document.cookie = "c=" + consent + "; m=" + JSON.stringify(arr);
   }
 
   function setConsentCookie(consent) {
     let arr = parseMedCookie();
-    document.cookie = "c=" + consent + "; a=" + JSON.stringify(arr);
+    document.cookie = "c=" + consent + "; m=" + JSON.stringify(arr);
   }
 
   function parseMedCookie() {
