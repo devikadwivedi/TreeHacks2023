@@ -15,7 +15,6 @@
   function init() {
     // just deal with the instance of adding one item to our table
     let generateButton = qs("button");
-    console.log(generateButton);
     generateButton.addEventListener("click", addItem);
   }
 
@@ -24,7 +23,6 @@
   async function addItem() {
     // 1 check if the search bar is empty
     let query = qs("input").value;
-    console.log(query)
     if (query == "") {
       return console.log("no input query");
       return;
@@ -34,31 +32,76 @@
     // make query call to search API. return error if not contained
     let rxcui = await getGenericToRxcui(query);
     // if no rxcui found directly, search brand name
-    if (rxcui === undefined) {
+    if (rxcui == "") {
       console.log("I am waiting to get the brand to rxcui")
       rxcui = await getBrandToRxcui(query);
     }
     if (rxcui == "") {
+      console.log("error: medication not found");
+    } else {
+      rxcuiArray.push(rxcui);
     }
+    /*
     console.log(document.cookie);
     console.log(rxcui);
-    rxcuiArray.push(rxcui);
-    console.log(rxcuiArray);
+
+    */
     addCookie(rxcui, query, false);
-    //3 add to the table
+
+    //3 add to the table and clear search bar
+    let added_section = id("added_meds");
+    let new_p = gen("p");
+    new_p = query+ " ";
+    added_section.append(new_p);
+    qs("input").value = "";
+
+    // ask for interactions
+    let rxcuis = "";
+    rxcuiArray.forEach((indiv) => {
+      console.log(indiv);
+      rxcuis += indiv;
+    });
+    //let interaction_set = await getRxcuiToInteractions(rxcuis);
+    if (rxcuiArray.length > 1) {
+      console.log(rxcuiArray);
+      let medication_string = rxcuiArray[0]
+      for (let i = 1; i < rxcuiArray.length; i++) {
+        medication_string += "+" + rxcuiArray[i];
+      }
+      let interaction_set = await getRxcuiToInteractions(medication_string);
+      let interaction_section = id("interactions");
+      new_p = "" + interaction_set;
+      interaction_section.append(new_p);
+    }
+
+  }
+
+  async function getRxcuiToInteractions(rxcuis) {
+    let url = BASE_URL + "/rxcuis_to_interactions/" + rxcuis;
+    console.log(url);
+    let interaction_set;
+    await fetch(url)
+      .then(statusCheck)
+      .then(resp => resp.text())
+      .then((resp) => {
+        interaction_set = resp;
+        })
+      .catch(handleError);
+      console.log("getRxcuiToInteractions returns: " + interaction_set);
+      return interaction_set;
 
   }
 
   function addCookie(rxcui, name, generic) {
-    console.log(document.cookie);
-    console.log(rxcui);
+    //console.log(document.cookie);
+    //console.log(rxcui);
     let arr = parseCookie();
     const newMed = {id: arr.length, rxcui: rxcui, name: name, generic: generic};
-    console.log(JSON.stringify(newMed));
-    arr.push(newMedi);
-    console.log(JSON.stringify(arr));
+    //console.log(JSON.stringify(newMed));
+    arr.push(newMed);
+    //console.log(JSON.stringify(arr));
     document.cookie = "c=" + JSON.stringify(arr);
-    console.log(document.cookie);
+    //console.log(document.cookie);
   }
 
   function removeCookie(rxcui) {
@@ -86,10 +129,12 @@
     await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
-      .then(resp => console.log(resp))
-      .then(resp => rxcui = resp)
+      .then((resp) => {
+        rxcui = resp;
+        })
       .catch(handleError);
-    return rxcui;
+      console.log("genericToRxcui returns: " + rxcui);
+      return rxcui;
   }
 
   /**
@@ -102,15 +147,13 @@
     await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
-      .then(resp => console.log(resp))
-      .then(resp => rxcui = resp)
+      .then((resp) => {
+        rxcui = resp
+        })
       .catch(handleError);
+      console.log("getBrandToRxcui returns: " + rxcui);
     return rxcui;
   }
-
-
-
-
 
   /**
    * gives the user a helpful message if an error occurs while requesting
