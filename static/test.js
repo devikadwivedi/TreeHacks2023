@@ -34,12 +34,11 @@
     // make query call to search API. return error if not contained
     let rxcui = await getGenericToRxcui(query);
     // if no rxcui found directly, search brand name
-    if (rxcui == "") {
-      rxcui = await getBrandToRxcui(query)
+    if (rxcui === undefined) {
+      console.log("I am waiting to get the brand to rxcui")
+      rxcui = await getBrandToRxcui(query);
     }
     if (rxcui == "") {
-      //console.log("return some error that input not found");
-      //return;
     }
     console.log(document.cookie);
     console.log(rxcui);
@@ -52,13 +51,24 @@
 
   function addCookie(rxcui, name, generic) {
     console.log(document.cookie);
+    console.log(rxcui);
     let arr = parseCookie();
-    const newMedi = {id: arr.length, rxcui: rxcui, name: name, generic: generic};
-    console.log(JSON.stringify(newMedi));
+    const newMed = {id: arr.length, rxcui: rxcui, name: name, generic: generic};
+    console.log(JSON.stringify(newMed));
     arr.push(newMedi);
     console.log(JSON.stringify(arr));
     document.cookie = "c=" + JSON.stringify(arr);
     console.log(document.cookie);
+  }
+
+  function removeCookie(rxcui) {
+    let arr = parseCoookie();
+    let newArr = arr.filter(function(e) {return e.rxcui !== rxcui});
+    document.cookie = "c=" + JSON.stringify(newArr);
+  }
+
+  function removeAllCookies() {
+    document.cookie = "c=[]";
   }
 
   function parseCookie() {
@@ -73,7 +83,7 @@
   async function getGenericToRxcui(query) {
     let url = BASE_URL + "generic_to_rxcui/" + query;
     let rxcui = ""
-    fetch(url)
+    await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
       .then(resp => console.log(resp))
@@ -82,7 +92,6 @@
     return rxcui;
   }
 
-
   /**
    * takes the med name query and returns if the brand is found
    * @param {String} type of excuse desired
@@ -90,7 +99,7 @@
   async function getBrandToRxcui(query) {
     let url = BASE_URL + "brand_to_rxcui/" + query;
     let rxcui = ""
-    fetch(url)
+    await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
       .then(resp => console.log(resp))
