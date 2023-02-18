@@ -19,7 +19,7 @@
     generateButton.addEventListener("click", addItem);
   }
 
-  function addItem() {
+  async function addItem() {
     // 1 check if the search bar is empty
     let query = qs("input").value;
     console.log(query)
@@ -30,17 +30,18 @@
 
     // 2 check if the search is a generic name
     // make query call to search API. return error if not contained
-    let rxcui = requestGeneric(query);
+    let rxcui = await getGenericToRxcui(query);
     // if no rxcui found directly, search brand name
     if (rxcui == "") {
-      rxcui = requestBrand(query)
+      rxcui = await getBrandToRxcui(query)
     }
     if (rxcui == "") {
       console.log("return some error that input not found");
       return;
     }
-
-    rxcuiArray.add(rxcui);
+    console.log(rxcui);
+    rxcuiArray.push(rxcui);
+    console.log(rxcuiArray);
     //3 add to the table
 
   }
@@ -49,8 +50,8 @@
    * takes the med name query and returns if the rxcui is found
    * @param {String} type of excuse desired
    */
-  function requestGeneric(query) {
-    let url = BASE_URL + "confirm_rxcui/" + query;
+  async function getGenericToRxcui(query) {
+    let url = BASE_URL + "generic_to_rxcui/" + query;
     let rxcui = ""
     fetch(url)
       .then(statusCheck)
@@ -66,8 +67,8 @@
    * takes the med name query and returns if the brand is found
    * @param {String} type of excuse desired
    */
-  function requestBrand(query) {
-    let url = BASE_URL + "confirm_brand/" + query;
+  async function getBrandToRxcui(query) {
+    let url = BASE_URL + "brand_to_rxcui/" + query;
     let rxcui = ""
     fetch(url)
       .then(statusCheck)
@@ -81,7 +82,7 @@
   function addCookie(rxcuid, name, generic) {
     let c = document.cookie;
     let arr = JSON.parse(c.substring(1));
-    const newMedi = {id: arr.length; rxcuid: rxcuid, name: name, generic: generic};
+    const newMedi = {id: arr.length, rxcuid: rxcuid, name: name, generic: generic};
     arr.push(newMedi);
     document.cookie = JSON.stringify(arr);
   }
