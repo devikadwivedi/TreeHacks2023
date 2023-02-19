@@ -31,10 +31,10 @@
 
     </div>
 
-    <div id="" style="overflow-y:scroll; overflow-x:hidden; height:200px;">
+    <div style="overflow-y:scroll; overflow-x:hidden; height:200px;">
       <ul id="medications" style = "font-size: 60px; list-style-type: none;">
         <li class = "notifElement">
-            <img src = "../static/Minus.png" class="icon" > </img>
+            <!--<img src = "../static/Minus.png" class="icon" > </img>-->
             <div>
               No medications added at this time.
             </div>
@@ -53,7 +53,7 @@
 
       <main style = "padding-left: 5%; top: 90%; bottom: 0px">
           <section id="query_section">
-              <input type="text" id="search_bar" value="cymbalta" required minlength="0"
+              <input type="text" id="search_bar" value="{{drug}}" required minlength="0"
               maxlength="25" size="10">
               <button id="add_button">Add To List</button>
           </section>
