@@ -143,7 +143,15 @@ def index():
     return render_template('index.html', drug="")
 
 # add a rule for the index page.
-application.add_url_rule('/','index', (lambda: index()), methods=['GET', 'POST'])
+application.add_url_rule('/home','index', (lambda: index()), methods=['GET', 'POST'])
+
+def front():
+    return render_template('front.html', drug="")
+
+# add a rule for the index page.
+application.add_url_rule('/','front', (lambda: front()), methods=['GET', 'POST'])
+
+
 
 # run the app.
 if __name__ == "__main__":
