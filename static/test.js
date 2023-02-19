@@ -161,7 +161,7 @@
 
   function addToPage(query) {
     let medications = id("medications");
-
+    medications.innerHTML = "";
     let listElement = gen("li");
     listElement.classList.add("notifElement");
 
