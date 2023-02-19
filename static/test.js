@@ -15,13 +15,18 @@
     // just deal with the instance of adding one item to our table
     let generateButton = qs("button");
     generateButton.addEventListener("click", addItem);
-    //if (document.cookies == "") {
+    //document.cookie = "m=[]";
+    if (getCookie("c") == "") {
         document.cookie = "c=true";
+    }
+    if (getCookie("m") == "") {
         document.cookie = "m=[]";
-    //}
-    let date = new Date(Date.now());
-    let newDate = date.setFullYear(date.getFullYear() + 1);
-    document.cookie = "expires=" + date.toUTCString();
+    }
+    if (getCookie("expires") == "") {
+        let date = new Date(Date.now());
+        let newDate = date.setFullYear(date.getFullYear() + 1);
+        document.cookie = "expires=" + date.toUTCString();
+    }
     console.log(document.cookie);
   }
 
@@ -98,20 +103,22 @@
 
   }
 
-  function addMedCookie(rxcui, name) {
+  function addMedCookie(rxcui, query) {
     console.log(parseConsentCookie());
     if (parseConsentCookie()) {
         let arr = parseMedCookie();
-        const newMed = {rxcui: rxcui, query: name};
-        arr.push(newMed);
-        setMedCookie(arr);
-        console.log(document.cookie);
+        if (parseMedCookie().filter(e => e.rxcui === rxcui).length == 0) {
+            const newMed = {rxcui: rxcui, query: query};
+            arr.push(newMed);
+            setMedCookie(arr);
+            console.log(document.cookie);
+        }
     }
   }
 
   function removeMedCookie(rxcui) {
     let arr = parseMedCookie();
-    let newArr = arr.filter(function(e) {return e.rxcui !== rxcui});
+    let newArr = arr.filter(function(e) {e => e.rxcui !== rxcui});
     setMedCookie(newArr);
   }
 
@@ -124,7 +131,13 @@
   }
 
   function setConsentCookie(consent) {
-    document.cookie = "c=" + String(consent);
+    if (typeof consent === 'boolean') {
+        document.cookie = "c=" + String(consent);
+        if (!consent) {
+            // Remove all stored medical data if consent withdrawn
+            removeAllMedCookie();
+        }
+    }
   }
 
   function parseMedCookie() {
@@ -141,7 +154,7 @@
     let name = cname + "=";
     let decodedCookie = decodeURIComponent(document.cookie);
     let ca = decodedCookie.split(';');
-    for(let i = 0; i <ca.length; i++) {
+    for(let i = 0; i < ca.length; i++) {
       let c = ca[i];
       while (c.charAt(0) == ' ') {
         c = c.substring(1);
