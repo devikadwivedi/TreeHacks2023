@@ -81,6 +81,7 @@
         medication_string += "+" + rxcuiArray[i];
       }
       let interaction_set = await getRxcuiToInteractions(medication_string);
+
       let notifications = id("notifications");
 
       if (interaction_set.length < 1) {
