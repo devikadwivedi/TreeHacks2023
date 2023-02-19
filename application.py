@@ -1,4 +1,4 @@
-from flask import Flask, flash, request, redirect, url_for
+from flask import Flask, flash, request, redirect, url_for, render_template
 import requests
 from PIL import Image
 from pyzbar.pyzbar import decode
@@ -116,6 +116,10 @@ def image_to_brand(image_name):
         print(response)
         return "error"
 
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def index():
     if request.method == 'POST':
@@ -131,17 +135,9 @@ def index():
             return redirect(request.url)
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return app.config["UPLOAD_FOLDER"] + filename
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
-      <input type=file name=file>
-      <input type=submit value=Upload>
-    </form>
-    '''
+            file.save(os.path.join(application.config['UPLOAD_FOLDER'], filename))
+            return application.config["UPLOAD_FOLDER"] + filename
+    return render_template('index.html', uploaded=False)
 
 # add a rule for the index page.
 application.add_url_rule('/','index', (lambda: index()), methods=['GET', 'POST'])

@@ -10,12 +10,14 @@
   <h2 style="margin:5px">My Rx</h2>
   <input type="text" id="myInput" placeholder="Drug brand, ingredient,">
   <span onclick="newElement()" class="addBtn">Add</span>
+  {% if uploaded == False %}
   <form enctype = "multipart/form-data" action = "python_script.py" method = "post">
     <div style="display: inline-block;">
       Upload File: <input type = "file" name = "filename" />
       <input type = "submit" value = "Upload" /> 
     </div>
     </form>
+    {% endif %}
 </div>
 
 <ul id="myUL">
