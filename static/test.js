@@ -12,9 +12,11 @@
    * sets up necessary functionality when page loads
    */
   function init() {
-    // just deal with the instance of adding one item to our table
-    let generateButton = qs("button");
-    generateButton.addEventListener("click", addItem);
+    // initialize the table from cookies
+
+    // on click of the add button
+    let add_button = id("add_button");
+    add_button.addEventListener("click", addItem);
     //if (document.cookies == "") {
         document.cookie = "c=true";
         document.cookie = "m=[]";
@@ -25,57 +27,88 @@
     console.log(document.cookie);
   }
 
-  async function addItem() {
-    // 1 check if the search bar is empty
-    let query = qs("input").value;
+  /**
+   * Ensure that query is not empty + not duplicated generic name
+   * @param {String} query the user's medication name input
+   * @returns boolean representing if the input is valid
+   */
+  function validateInput(query) {
     if (query == "") {
-      return console.log("no input query");
-      return;
+      return console.log("Error: no input query");
+      return false;
     }
+    // check if the input is a duplicate.
+    return true;
+  }
 
-    // 2 check if the search is a generic name
-    // make query call to search API. return error if not contained
-    let rxcui = await getGenericToRxcui(query);
-    // if no rxcui found directly, search brand name
+  /**
+   * given a generic name or brand name, find the rxcui and add it to array
+   * @param {Ftring} query is the user's medication input
+   * @returns the rxcui if found or null if not found
+   */
+  async function getRxcui(query) {
+    let rxcui;
+    rxcui = await getGenericToRxcui(query);
     if (rxcui == "") {
       console.log("I am waiting to get the brand to rxcui")
       rxcui = await getBrandToRxcui(query);
     }
+
     if (rxcui == "") {
       console.log("error: medication not found");
-    } else {
-      rxcuiArray.push(rxcui);
-      addMedCookie(rxcui, query);
+      return null;
     }
 
-    //3 add to the table and clear search bar
-    let added_section = id("added_meds");
-    let new_p = gen("p");
-    new_p = query+ " ";
-    added_section.append(new_p);
-    qs("input").value = "";
+    rxcuiArray.push(rxcui);
+    addMedCookie(rxcui, query);
+    return rxcui;
+  }
 
-    // ask for interactions
-    let rxcuis = "";
-    rxcuiArray.forEach((indiv) => {
-      console.log(indiv);
-      rxcuis += indiv;
-    });
-    //let interaction_set = await getRxcuiToInteractions(rxcuis);
+  async function getInteractions(query) {
     if (rxcuiArray.length > 1) {
-      console.log(rxcuiArray);
       let medication_string = rxcuiArray[0]
       for (let i = 1; i < rxcuiArray.length; i++) {
         medication_string += "+" + rxcuiArray[i];
       }
       let interaction_set = await getRxcuiToInteractions(medication_string);
+
+      // put into the page
       let interaction_section = id("interactions");
+      interaction_section.innerHTML = "";
       if (interaction_set === undefined) {
         return;
       }
-      new_p = "" + interaction_set;
+      let new_p = "" + interaction_set;
       interaction_section.append(new_p);
     }
+  }
+
+  function addToPage(query) {
+    let addedSection = id("medList");
+    console.log(addedSection);
+    let medicationName = gen("p");
+    medicationName = query + " ";
+    addedSection.append(medicationName);
+    id("search_bar").value = "";
+  }
+
+  async function addItem() {
+    // 1 validate response
+    let query = id("search_bar").value;
+    if (validateInput(query) == false) {
+      console.log("input rejected");
+      return;
+    }
+
+    // 2 check if the search is a generic name
+    let rxcui = await getRxcui(query);
+    if (rxcui === null) {
+      return;
+    }
+
+    //3 add to the table and clear search bar
+    addToPage(query);
+    getInteractions(query)
   }
 
   async function getRxcuiToInteractions(rxcuis) {
