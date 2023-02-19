@@ -322,7 +322,7 @@
   }
 
   async function getInteractionToGPT() {
-    let url = BASE_URL + "/interaction_to_gpt/" + this.id;
+    let url = BASE_URL + "interaction_to_gpt/" + this.id;
     console.log(url);
     await fetch(url)
       .then(statusCheck)
@@ -331,7 +331,6 @@
         alert(resp);
       })
       .catch(handleError);
-      this.onclick = "";
   }
 
   /**
