@@ -1,27 +1,79 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="utf-8">
-    <title>[Working Title]</title>
-    <script src="../static/test.js"></script>
-</head>
+  <html lang="en">
+  <head>
+      <meta charset="utf-8">
+      <title>MyRx</title>
+      <script src="../static/test.js"></script>
+      <link rel="stylesheet" type="text/css" rel="noopener" target="_blank" href="../static/styles.css">
+  </head>
 
-<body>
-<header>
-    <h1>Add Medications</h1>
-</header>
-<main>
-    <section id="query_section">
-        <input type="text" id="search_bar" value="cymbalta" required minlength="0"
-               maxlength="25" size="10">
-        <button id="add_button">Add To List</button>
-    </section>
-    <section id="added_meds">
+  <body>
 
-    </section>
-    <section id="interactions">
+    <div id="boxTop"></div>
+    <h1 id = "introHeader">Welcome Patient</h1>
+    <h1 id = "notifListHeader">Notifications</h1>
+    <div id="" style="overflow-y:scroll; overflow-x:hidden; height:200px;">
+      <ul id="notifications" style = "font-size: 60px; list-style-type: none;">
+        <li class = "notifElement">
+            <img src = "../static/warning.png" class="icon" > </img>
+            <div>
+              No notifications at this time.
+            </div>
+        </li>
+      </ul>
+    </div>
 
-    </section>
-</main>
-</body>
+
+    <div class = "deleteSameLine">
+      <h1 id = "notifListHeader">List of Meds</h1>
+      <p style = "padding-left: 5%; padding-top: 8%"> <a href="#" onclick="removeAllMethodFromJs">Remove all</a> </p>
+    </div>
+
+x
+    <div id="" style="overflow-y:scroll; overflow-x:hidden; height:200px;">
+      <ul id="medications" style = "font-size: 60px; list-style-type: none;">
+        <li class = "notifElement">
+            <img src = "../static/delete.png" class="icon" > </img>
+            <div>
+              No medications added at this time.
+            </div>
+        </li>
+      </ul>
+    </div>
+    <!--<img src="../static/delete.png" alt="Issue">-->
+    <p>"Medication #_"</p>
+
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data onsubmit="process_image">
+      <input type=file name=file id="upload-file">
+      <input type=submit value=Upload>
+    </form>
+
+    <h1>Upload Medication Name</h1>
+    <form>
+      <div>
+        <input id="med-name" type="text" name="medication name" />
+      </div>
+      <div>
+        <input type="submit" value="Send"/>
+      </div>
+    </form>
+
+
+    <a href="#" onclick="window.print();return false;">Print page</a>
+
+    <p>"Medication #_"</p>
+
+    <main>
+        <section id="query_section">
+            <input type="text" id="search_bar" value="cymbalta" required minlength="0"
+            maxlength="25" size="10">
+            <button id="add_button">Add To List</button>
+        </section>
+
+    </main>
+
+    </div>
+    <div id = "boxBottom"> </div>
+  </body>
 </html>

@@ -1,7 +1,7 @@
 from flask import Flask, render_template
 import requests
 from PIL import Image
-from pyzbar.pyzbar import decode
+#from pyzbar.pyzbar import decode
 import os
 import openai
 
@@ -95,7 +95,7 @@ def brand_to_rxcui(brand_name):
 
 # image to brand
 def image_to_brand(image_name):
-    image_path = UPLOAD_FOLDER + image_name    
+    image_path = UPLOAD_FOLDER + image_name
 
     img = Image.open(image_path)
     #scan barcode
