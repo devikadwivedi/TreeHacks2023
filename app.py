@@ -39,8 +39,12 @@ def rxcuis_to_interactions(rxcui):
             descriptionSet.add(ip_array[i]['description'])
     res = response_json['fullInteractionTypeGroup'][0]['fullInteractionType'][0]['interactionPair'][0]['description']
 
+    descriptionArr = []
 
-    return f'{descriptionSet}'
+    for el in descriptionSet:
+        descriptionArr.append(el)
+
+    return {"interactions": descriptionArr}
 
 @app.route('/generic_to_rxcui/<generic_name>')
 def generic_to_rxcui(generic_name):

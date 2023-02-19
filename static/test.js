@@ -71,24 +71,47 @@
         medication_string += "+" + rxcuiArray[i];
       }
       let interaction_set = await getRxcuiToInteractions(medication_string);
+      for (let i = 0; i < length(interaction_set); i++) {
+        // put into the page
+        let notifications = id("notifications");
+        if (interaction_set === undefined) {
+          return;
+        }
+        let listElement = gen("li");
+        listElement.classList.add("notifElement");
 
-      // put into the page
-      let interaction_section = id("interactions");
-      interaction_section.innerHTML = "";
-      if (interaction_set === undefined) {
-        return;
+        let newImage = gen("img");
+        newImage.src = "/static/warning.png";
+        newImage.alt = "photo of exclamation mark";
+        newImage.classList.add("icon");
+
+        let newDiv = gen("div");
+        newDiv.innerHTML = interaction_set[i];
+        listElement.appendChild(newImage);
+        listElement.appendChild(newDiv);
+        notifications.appendChild(listElement);
       }
-      let new_p = "" + interaction_set;
-      interaction_section.append(new_p);
     }
   }
 
   function addToPage(query) {
-    let addedSection = id("medList");
-    console.log(addedSection);
-    let medicationName = gen("p");
-    medicationName = query + " ";
-    addedSection.append(medicationName);
+    let medications = id("medications");
+
+    let listElement = gen("li");
+    listElement.classList.add("notifElement");
+
+    let newImage = gen("img");
+    newImage.src = "/static/delete.png";
+    newImage.alt = "photo of cross";
+    newImage.classList.add("icon");
+
+
+    let newDiv = gen("div");
+    newDiv.innerHTML = query;
+    listElement.appendChild(newImage);
+    listElement.appendChild(newDiv);
+    medications.appendChild(listElement);
+
     id("search_bar").value = "";
   }
 
@@ -122,13 +145,8 @@
         interaction_set = resp;
         })
       .catch(handleError);
-      console.log("getRxcuiToInteractions returns: " + interaction_set);
-      return interaction_set;
-    rxcuiArray.push(rxcui);
-    addMedCookie(rxcui, query, false);
-    console.log(document.cookies);
-    //3 add to the table
-
+      console.log("getRxcuiToInteractions returns: " + JSON.parse(interaction_set)['interactions']);
+      return JSON.parse(interaction_set)['interactions'];
   }
 
   function addMedCookie(rxcui, name) {
