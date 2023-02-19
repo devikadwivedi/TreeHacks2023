@@ -1,7 +1,7 @@
 from flask import Flask, flash, request, redirect, url_for, render_template
 import requests
 from PIL import Image
-#from pyzbar.pyzbar import decode
+from pyzbar.pyzbar import decode
 import os
 import openai
 from werkzeug.utils import secure_filename

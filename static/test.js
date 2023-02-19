@@ -5,7 +5,7 @@
 "use strict";
 (function() {
   window.addEventListener("load", init);
-  const BASE_URL = "http://127.0.0.1:5000/";
+  const BASE_URL = "http://10.21.51.146:5000/";
   let rxcuiArray = [];
 
   /**
@@ -39,7 +39,7 @@
     console.log(document.cookie);
   }
 
-
+  /*
   function processfile(file) {
   
     if( !( /image/i ).test( file.type ) )
@@ -136,6 +136,7 @@ function resizeMe(img) {
     return canvas.toDataURL("image/jpeg",0.7); // get the data from canvas as 70% JPG (can be also PNG, etc.)
 
   }
+  */
 
   /**
    * Ensure that query is not empty + not duplicated generic name
