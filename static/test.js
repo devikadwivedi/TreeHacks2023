@@ -34,7 +34,6 @@
 
     let arr = parseMedCookie();
     for (let i = 0; i < arr.length; i++) {
-        getRxcui(arr[i].query);
         addItemFromQuery(arr[i].query);
     }
     console.log(document.cookie);
@@ -58,11 +57,11 @@
     // clear the rxcuiArray
     rxcuiArray = [];
     // clear the medications
-    clearMedications()
+    clearMedications();
     // clear the interactions
     clearInteractions();
     // clear cookies
-    removeAllMedCookie()
+    removeAllMedCookie();
   }
 
 
