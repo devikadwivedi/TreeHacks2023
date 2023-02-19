@@ -20,6 +20,9 @@
     // just deal with the instance of adding one item to our table
     let generateButton = qs("button");
     generateButton.addEventListener("click", addItem);
+    let removeAll = id("remove_all");
+    removeAll.addEventListener("click", removeAllQueries);
+
     //document.cookie = "m=[]";
 
     if (getCookie("c") == "") {
@@ -51,6 +54,18 @@
     return true;
   }
 
+  function removeAllQueries() {
+    // clear the rxcuiArray
+    rxcuiArray = [];
+    // clear the medications
+    clearMedications()
+    // clear the interactions
+    clearInteractions();
+    // clear cookies
+    removeAllMedCookie()
+  }
+
+
   /**
    * given a generic name or brand name, find the rxcui and add it to array
    * @param {Ftring} query is the user's medication input
@@ -74,6 +89,43 @@
     return rxcui;
   }
 
+  function clearMedications() {
+    let medications = id("medications");
+    medications.innerHTML = "";
+    let listElement = gen("li");
+    listElement.classList.add("notifElement");
+
+    let newImage = gen("img");
+    newImage.src = "/static/delete.png";
+    newImage.alt = "photo of cross";
+    newImage.classList.add("icon");
+
+
+    let newDiv = gen("div");
+    newDiv.innerHTML = "No medications added at this time.";
+    listElement.appendChild(newImage);
+    listElement.appendChild(newDiv);
+    medications.appendChild(listElement);
+  }
+
+  function clearInteractions() {
+    let notifications = id("notifications");
+    notifications.innerHTML = "";
+    // no interactions:
+    let listElement = gen("li");
+    listElement.classList.add("notifElement");
+    let newImage = gen("img");
+    newImage.src = "/static/warning.png";
+    newImage.alt = "photo of exclamation mark";
+    newImage.classList.add("icon");
+
+    let newDiv = gen("div");
+    newDiv.innerHTML = "No notifications at this time";
+    listElement.appendChild(newImage);
+    listElement.appendChild(newDiv);
+    notifications.appendChild(listElement);
+  }
+
   async function getInteractions(query) {
     if (rxcuiArray.length > 1) {
       let medication_string = rxcuiArray[0].rxcui;
@@ -83,25 +135,11 @@
       let interaction_set = await getRxcuiToInteractions(medication_string);
 
       let notifications = id("notifications");
-
+      notifications.innerHTML = "";
       if (interaction_set.length < 1) {
         // no interactions:
-        let listElement = gen("li");
-        listElement.classList.add("notifElement");
-
-        let newImage = gen("img");
-        newImage.src = "/static/warning.png";
-        newImage.alt = "photo of exclamation mark";
-        newImage.classList.add("icon");
-
-        let newDiv = gen("div");
-        newDiv.innerHTML = "No notifications at this time";
-        listElement.appendChild(newImage);
-        listElement.appendChild(newDiv);
-        notifications.appendChild(listElement);
-        return;
+        clearInteractions();
       }
-      notifications.innerHTML = "";
       for (let i = 1; i < interaction_set.length; i++) {
         // put into the page
         let listElement = gen("li");
