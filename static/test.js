@@ -7,73 +7,238 @@
   window.addEventListener("load", init);
   const BASE_URL = "http://127.0.0.1:5000/";
   let rxcuiArray = [];
-  document.cookie = "c=[]";
 
   /**
    * sets up necessary functionality when page loads
    */
   function init() {
+    // initialize the table from cookies
+
+    // on click of the add button
+    let add_button = id("add_button");
+    add_button.addEventListener("click", addItem);
+    if (getCookie("c") == "") {
+            document.cookie = "c=true;expires=" + expireDate();
+        }
+        if (getCookie("m") == "") {
+            document.cookie = "m=[];expires=" + expireDate();
+        }
     // just deal with the instance of adding one item to our table
     let generateButton = qs("button");
-    console.log(generateButton);
     generateButton.addEventListener("click", addItem);
+    //document.cookie = "m=[]";
+
+    if (getCookie("c") == "") {
+        document.cookie = "c=true;expires=" + expireDate();
+    }
+    if (getCookie("m") == "") {
+        document.cookie = "m=[];expires=" + expireDate();
+    }
+    console.log(document.cookie);
   }
 
+  /**
+   * Ensure that query is not empty + not duplicated generic name
+   * @param {String} query the user's medication name input
+   * @returns boolean representing if the input is valid
+   */
+  function validateInput(query) {
+    if (query == "") {
+      return console.log("Error: no input query");
+      return false;
+    }
+    // check if the input is a duplicate.
+    return true;
+  }
 
+  /**
+   * given a generic name or brand name, find the rxcui and add it to array
+   * @param {Ftring} query is the user's medication input
+   * @returns the rxcui if found or null if not found
+   */
+  async function getRxcui(query) {
+    let rxcui;
+    rxcui = await getGenericToRxcui(query);
+    if (rxcui == "") {
+      console.log("I am waiting to get the brand to rxcui")
+      rxcui = await getBrandToRxcui(query);
+    }
+
+    if (rxcui == "") {
+      console.log("error: medication not found");
+      return null;
+    }
+
+    rxcuiArray.push(rxcui);
+    addMedCookie(rxcui, query);
+    return rxcui;
+  }
+
+  async function getInteractions(query) {
+    if (rxcuiArray.length > 1) {
+      let medication_string = rxcuiArray[0]
+      for (let i = 1; i < rxcuiArray.length; i++) {
+        medication_string += "+" + rxcuiArray[i];
+      }
+      let interaction_set = await getRxcuiToInteractions(medication_string);
+      for (let i = 0; i < length(interaction_set); i++) {
+        // put into the page
+        let notifications = id("notifications");
+        if (interaction_set === undefined) {
+          return;
+        }
+        let listElement = gen("li");
+        listElement.classList.add("notifElement");
+
+        let newImage = gen("img");
+        newImage.src = "/static/warning.png";
+        newImage.alt = "photo of exclamation mark";
+        newImage.classList.add("icon");
+
+        let newDiv = gen("div");
+        newDiv.innerHTML = interaction_set[i];
+        listElement.appendChild(newImage);
+        listElement.appendChild(newDiv);
+        notifications.appendChild(listElement);
+      }
+    }
+  }
+
+  function addToPage(query) {
+    let medications = id("medications");
+
+    let listElement = gen("li");
+    listElement.classList.add("notifElement");
+
+    let newImage = gen("img");
+    newImage.src = "/static/delete.png";
+    newImage.alt = "photo of cross";
+    newImage.classList.add("icon");
+
+
+    let newDiv = gen("div");
+    newDiv.innerHTML = query;
+    listElement.appendChild(newImage);
+    listElement.appendChild(newDiv);
+    medications.appendChild(listElement);
+
+    id("search_bar").value = "";
+  }
 
   async function addItem() {
-    // 1 check if the search bar is empty
-    let query = qs("input").value;
-    console.log(query)
-    if (query == "") {
-      return console.log("no input query");
+    // 1 validate response
+    let query = id("search_bar").value;
+    if (validateInput(query) == false) {
+      console.log("input rejected");
       return;
     }
 
     // 2 check if the search is a generic name
-    // make query call to search API. return error if not contained
-    let rxcui = await getGenericToRxcui(query);
-    // if no rxcui found directly, search brand name
-    if (rxcui === undefined) {
-      console.log("I am waiting to get the brand to rxcui")
-      rxcui = await getBrandToRxcui(query);
+    let rxcui = await getRxcui(query);
+    if (rxcui === null) {
+      return;
     }
-    if (rxcui == "") {
+
+    //3 add to the table and clear search bar
+    addToPage(query);
+    getInteractions(query)
+  }
+
+  async function removeItem(rxcui) {
+    rxcuiArray = rxcuiArray.filter(e => e.rxcui !== rxcui);
+    removeMedCookie(rxcui);
+  }
+
+  async function toggleCookieConsent() {
+    if (parseConsentCookie()) {
+        setConsentCookie(false);
+    } else {
+        setConsentCookie(true);
     }
-    console.log(document.cookie);
-    console.log(rxcui);
-    rxcuiArray.push(rxcui);
-    console.log(rxcuiArray);
-    addCookie(rxcui, query, false);
-    //3 add to the table
-
   }
 
-  function addCookie(rxcui, name, generic) {
-    console.log(document.cookie);
-    console.log(rxcui);
-    let arr = parseCookie();
-    const newMed = {id: arr.length, rxcui: rxcui, name: name, generic: generic};
-    console.log(JSON.stringify(newMed));
-    arr.push(newMed);
-    console.log(JSON.stringify(arr));
-    document.cookie = "c=" + JSON.stringify(arr);
-    console.log(document.cookie);
+  async function getRxcuiToInteractions(rxcuis) {
+    let url = BASE_URL + "/rxcuis_to_interactions/" + rxcuis;
+    console.log(url);
+    let interaction_set;
+    await fetch(url)
+      .then(statusCheck)
+      .then(resp => resp.text())
+      .then((resp) => {
+        interaction_set = resp;
+        })
+      .catch(handleError);
+      console.log("getRxcuiToInteractions returns: " + JSON.parse(interaction_set)['interactions']);
+      return JSON.parse(interaction_set)['interactions'];
   }
 
-  function removeCookie(rxcui) {
-    let arr = parseCoookie();
-    let newArr = arr.filter(function(e) {return e.rxcui !== rxcui});
-    document.cookie = "c=" + JSON.stringify(newArr);
+  function addMedCookie(rxcui, query) {
+    console.log(parseConsentCookie());
+    if (parseConsentCookie()) {
+        let arr = parseMedCookie();
+        if (parseMedCookie().filter(e => e.rxcui === rxcui).length == 0) {
+            const newMed = {rxcui: rxcui, query: query};
+            arr.push(newMed);
+            setMedCookie(arr);
+            console.log(document.cookie);
+        }
+    }
   }
 
-  function removeAllCookies() {
-    document.cookie = "c=[]";
+  function removeMedCookie(rxcui) {
+    let arr = parseMedCookie();
+    let newArr = arr.filter(function(e) {e => e.rxcui !== rxcui});
+    setMedCookie(newArr);
   }
 
-  function parseCookie() {
-     let c = document.cookie;
-     return JSON.parse(c.substring(2));
+  function removeAllMedCookie() {
+    setMedCookie([]);
+  }
+
+  function setMedCookie(arr) {
+    document.cookie = "m=" + JSON.stringify(arr) + ";expires=" + expireDate();
+  }
+
+  function setConsentCookie(consent) {
+    if (typeof consent === 'boolean') {
+        document.cookie = "c=" + String(consent) + "expires=" + expireDate();
+        if (!consent) {
+            // Remove all stored medical data if consent withdrawn
+            removeAllMedCookie();
+        }
+    }
+  }
+
+  function parseMedCookie() {
+     let m = getCookie("m");
+     return JSON.parse(m);
+  }
+
+  function parseConsentCookie() {
+    let c = getCookie("c");
+    return c == 'true';
+  }
+
+  function getCookie(cname) {
+    let name = cname + "=";
+    let decodedCookie = decodeURIComponent(document.cookie);
+    let ca = decodedCookie.split(';');
+    for(let i = 0; i < ca.length; i++) {
+      let c = ca[i];
+      while (c.charAt(0) == ' ') {
+        c = c.substring(1);
+      }
+      if (c.indexOf(name) == 0) {
+        return c.substring(name.length, c.length);
+      }
+    }
+    return "";
+  }
+
+  function expireDate() {
+    let date = new Date(Date.now());
+    date.setFullYear(date.getFullYear() + 1);
+    return date.toUTCString();
   }
 
   /**
@@ -86,10 +251,12 @@
     await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
-      .then(resp => console.log(resp))
-      .then(resp => rxcui = resp)
+      .then((resp) => {
+        rxcui = resp;
+        })
       .catch(handleError);
-    return rxcui;
+      console.log("genericToRxcui returns: " + rxcui);
+      return rxcui;
   }
 
   /**
@@ -102,9 +269,11 @@
     await fetch(url)
       .then(statusCheck)
       .then(resp => resp.text())
-      .then(resp => console.log(resp))
-      .then(resp => rxcui = resp)
+      .then((resp) => {
+        rxcui = resp
+        })
       .catch(handleError);
+      console.log("getBrandToRxcui returns: " + rxcui);
     return rxcui;
   }
 
@@ -124,7 +293,8 @@
    */
   async function statusCheck(res) {
     if (!res.ok) {
-      throw new Error(await res.text());
+      console.log("Server Error: Not Found");
+      return "";
     }
     return res;
   }
@@ -166,3 +336,12 @@
   }
 
 })();
+
+
+async function process_image() {
+  const file = document.getElementById("upload-file").value
+  // send this file to your api
+  const response = await makeRequest(file)
+  const medName = response.json().med_name
+  document.getElementById("med-name").value = medName
+}

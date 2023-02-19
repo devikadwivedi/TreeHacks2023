@@ -1,0 +1,83 @@
+body {
+    margin: 0px;
+    padding: 100px 0px 0px 0px;
+    overflow: hidden; /* overflow: hidden prevents full scrollbar in IE */
+}
+
+div#header {
+    /* you must include "div" for IE */
+    position: absolute;
+    top:0px;
+    left: 0px;
+    width: 100%;
+    height: 100px;
+    background-color: #aabbff;
+    overflow: hidden;
+}
+
+#boxTop{
+    box-sizing: border-box;
+    position: absolute;
+    width: 80%;
+    height: 5%;
+    left: -5%;
+    top: 0px;
+    background: #003B73;
+    border: 1px solid #003B73;
+    border-radius: 100px;
+}
+
+#boxBottom{
+    box-sizing: border-box;
+    position: absolute;
+    width: 100%;
+    height: 5%;
+    bottom: 0px;
+    background: #003B73;
+    border: 1px solid #003B73;
+}
+
+#notifications {
+    max-height: 300px;
+    overflow-y: scroll;
+}
+
+#introHeader {
+    /* Welcome Patient */
+    font-family: 'Roboto';
+    font-size: 100px;
+    line-height: 5%;
+    padding-left: 2.5%;
+    display: flex;
+    align-items: center;
+    color: #003B73;
+}
+
+#notifListHeader {
+    font-family: 'Roboto';
+    font-style: normal;
+    font-size: 80px;
+    padding-left: 5%;
+    line-height: 100%;
+    display: flex;
+    color: #0074B7;
+    margin-block-end: 0.1em;
+}
+
+.notifElement {
+    display: flex;
+    flex-direction: row;
+}
+
+.deleteSameLine {
+    display: flex;
+    flex-direction: row;
+}
+
+.icon {
+    width: 10%;
+    height: 10%;
+    padding-right: 5%;
+}
+
+

@@ -1,32 +1,79 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel='stylesheet' href='../static/style.css'>
-</head>
-<body>
-<script src="../static/index.js"></script>
-<div id="myDIV" class="header">
-  <h2 style="margin:5px">My Rx</h2>
-  <input type="text" id="myInput" placeholder="Drug brand, ingredient,">
-  <span onclick="newElement()" class="addBtn">Add</span>
-  {% if uploaded == False %}
-  <form enctype = "multipart/form-data" action = "python_script.py" method = "post">
-    <div style="display: inline-block;">
-      Upload File: <input type = "file" name = "filename" />
-      <input type = "submit" value = "Upload" /> 
-    </div>
-    </form>
-    {% endif %}
-</div>
+  <html lang="en">
+  <head>
+      <meta charset="utf-8">
+      <title>MyRx</title>
+      <script src="../static/test.js"></script>
+      <link rel="stylesheet" type="text/css" rel="noopener" target="_blank" href="../static/styles.css">
+  </head>
 
-<ul id="myUL">
-  <div id="interactions">
-  </div>
-</ul>
-<hr class="rounded">
-<ul id="myUL">
-  <li>notifs</li>
-</ul>
-</body>
+  <body>
+
+    <div id="boxTop"></div>
+    <h1 id = "introHeader">Welcome Patient</h1>
+    <h1 id = "notifListHeader">Notifications</h1>
+    <div id="" style="overflow-y:scroll; overflow-x:hidden; height:200px;">
+      <ul id="notifications" style = "font-size: 60px; list-style-type: none;">
+        <li class = "notifElement">
+            <img src = "../static/warning.png" class="icon" > </img>
+            <div>
+              No notifications at this time.
+            </div>
+        </li>
+      </ul>
+    </div>
+
+
+    <div class = "deleteSameLine">
+      <h1 id = "notifListHeader">List of Meds</h1>
+      <p style = "padding-left: 5%; padding-top: 8%"> <a href="#" onclick="removeAllMethodFromJs">Remove all</a> </p>
+    </div>
+
+x
+    <div id="" style="overflow-y:scroll; overflow-x:hidden; height:200px;">
+      <ul id="medications" style = "font-size: 60px; list-style-type: none;">
+        <li class = "notifElement">
+            <img src = "../static/delete.png" class="icon" > </img>
+            <div>
+              No medications added at this time.
+            </div>
+        </li>
+      </ul>
+    </div>
+    <!--<img src="../static/delete.png" alt="Issue">-->
+    <p>"Medication #_"</p>
+
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data onsubmit="process_image">
+      <input type=file name=file id="upload-file">
+      <input type=submit value=Upload>
+    </form>
+
+    <h1>Upload Medication Name</h1>
+    <form>
+      <div>
+        <input id="med-name" type="text" name="medication name" />
+      </div>
+      <div>
+        <input type="submit" value="Send"/>
+      </div>
+    </form>
+
+
+    <a href="#" onclick="window.print();return false;">Print page</a>
+
+    <p>"Medication #_"</p>
+
+    <main>
+        <section id="query_section">
+            <input type="text" id="search_bar" value="cymbalta" required minlength="0"
+            maxlength="25" size="10">
+            <button id="add_button">Add To List</button>
+        </section>
+
+    </main>
+
+    </div>
+    <div id = "boxBottom"> </div>
+  </body>
 </html>
