@@ -1,7 +1,7 @@
 from flask import Flask, flash, request, redirect, url_for, render_template
 import requests
 from PIL import Image
-#from pyzbar.pyzbar import decode
+from pyzbar.pyzbar import decode
 import os
 import openai
 from werkzeug.utils import secure_filename
@@ -56,10 +56,12 @@ def rxcuis_to_interactions(rxcuis):
         ip_array = fip_array[j]['interactionPair']
         for i in range (len(ip_array)):
             descriptionSet.add(ip_array[i]['description'])
-    res = response_json['fullInteractionTypeGroup'][0]['fullInteractionType'][0]['interactionPair'][0]['description']
+    result = ""
+    for element in descriptionSet:
+        result += "@" + element
 
-
-    return f'{descriptionSet}'
+    print(result)
+    return result
 
 # rule for genericToRxcui
 application.add_url_rule('/generic_to_rxcui/<generic_name>', 'genericToRxcui', (lambda generic_name: generic_to_rxcui(generic_name)))
@@ -96,7 +98,7 @@ def image_to_brand(image_name):
     img = Image.open(image_path)
     #scan barcode
     decoded_list = decode(img)
-    #os.remove(image_path)
+    os.remove(image_path)
     parsed_product_upc = str(int(decoded_list[0][0]))
 
     #get barcode to product from api
@@ -136,8 +138,9 @@ def index():
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(application.config['UPLOAD_FOLDER'], filename))
-            return application.config["UPLOAD_FOLDER"] + filename
-    return render_template('index.html', uploaded=False)
+            brand = image_to_brand(filename)
+            return render_template('index.html', drug=brand)
+    return render_template('index.html', drug="")
 
 # add a rule for the index page.
 application.add_url_rule('/','index', (lambda: index()), methods=['GET', 'POST'])
