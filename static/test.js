@@ -84,6 +84,14 @@
     removeMedCookie(rxcui);
   }
 
+  async function toggleCookieConsent() {
+    if (parseConsentCookie()) {
+        setConsentCookie(false);
+    } else {
+        setConsentCookie(true);
+    }
+  }
+
   async function getRxcuiToInteractions(rxcuis) {
     let url = BASE_URL + "/rxcuis_to_interactions/" + rxcuis;
     console.log(url);
