@@ -19,7 +19,7 @@ application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # rule for interactionToGPT
 application.add_url_rule('/interaction_to_gpt/<brands>', 'interactionToGPT', (lambda brands: interaction_to_gpt(brands)))
 def interaction_to_gpt(brands):
-    prompt = "explain to someone without a lot of experience with the medical system the harmful impacts of taking" + str(brands.split('+')) + "at the same time in 1 sentence."
+    prompt = "explain to someone with little experience with the medical system the harmful impacts of taking" + str(brands.split('+')) + "at the same time in 1 sentence. If you can, replace chemical names with drug brand names."
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
