@@ -24,7 +24,11 @@
     </div>
     <div class = "deleteSameLine">
       <h1 id = "notifListHeader">List of Meds</h1>
-      <button class = "button-8" id="remove_all"> Delete All </button>
+    </div>
+    <div style = "padding-left: 5%" >
+
+    <button style = "padding-left: 10px; justify-content: center;align-items: center; display: flex;" class = "button-8" id="remove_all"> Delete All </button>
+
     </div>
 
     <div id="" style="overflow-y:scroll; overflow-x:hidden; height:200px;">
@@ -38,10 +42,11 @@
       </ul>
     </div>
 
-    <div class = "uploadElement"> 
- 
+    <h1 id = "notifListHeader">Add New Medication</h1>
+
+    <div style = "padding-left: 5%" class = "uploadElement"> 
+
       <form method=post enctype=multipart/form-data onsubmit="process_image">
-        <img src = "../static/Upload.png"> </img>
         <input type=file name=file id="upload-file">
         <input type=submit value=Upload>
       </form>
