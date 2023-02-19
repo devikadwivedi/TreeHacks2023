@@ -34,7 +34,6 @@
 
     let arr = parseMedCookie();
     for (let i = 0; i < arr.length; i++) {
-        getRxcui(arr[i].query);
         addItemFromQuery(arr[i].query);
     }
     console.log(document.cookie);
@@ -58,11 +57,11 @@
     // clear the rxcuiArray
     rxcuiArray = [];
     // clear the medications
-    clearMedications()
+    clearMedications();
     // clear the interactions
     clearInteractions();
     // clear cookies
-    removeAllMedCookie()
+    removeAllMedCookie();
   }
 
 
@@ -84,9 +83,12 @@
       return null;
     }
 
-    rxcuiArray.push({rxcui: rxcui, query: query});
-    addMedCookie(rxcui, query);
-    return rxcui;
+    if (rxcuiArray.filter(e => e.rxcui === rxcui).length == 0) {
+        rxcuiArray.push({rxcui: rxcui, query: query});
+        addMedCookie(rxcui, query);
+        return rxcui;
+    }
+    return null;
   }
 
   function clearMedications() {
@@ -125,7 +127,6 @@
     listElement.appendChild(newDiv);
     notifications.appendChild(listElement);
   }
-
   async function getInteractions(query) {
     if (rxcuiArray.length > 1) {
       let medication_string = rxcuiArray[0].rxcui;
@@ -149,6 +150,9 @@
         newImage.src = "/static/warning.png";
         newImage.alt = "photo of exclamation mark";
         newImage.classList.add("icon");
+        newImage.onclick = getInteractionToGPT;
+        newImage.id = interaction_set[i];
+
 
         let newDiv = gen("div");
         newDiv.innerHTML = interaction_set[i];
@@ -169,7 +173,6 @@
     newImage.src = "/static/delete.png";
     newImage.alt = "photo of cross";
     newImage.classList.add("icon");
-
 
     let newDiv = gen("div");
     newDiv.innerHTML = query;
@@ -231,7 +234,6 @@
   }
 
   function addMedCookie(rxcui, query) {
-    console.log(parseConsentCookie());
     if (parseConsentCookie()) {
         let arr = parseMedCookie();
         if (parseMedCookie().filter(e => e.rxcui === rxcui).length == 0) {
@@ -315,6 +317,19 @@
       .catch(handleError);
       console.log("genericToRxcui returns: " + rxcui);
       return rxcui;
+  }
+
+  async function getInteractionToGPT() {
+    let url = BASE_URL + "/interaction_to_gpt/" + this.id;
+    console.log(url);
+    await fetch(url)
+      .then(statusCheck)
+      .then(resp => resp.text())
+      .then((resp) => {
+        alert(resp);
+      })
+      .catch(handleError);
+      this.onclick = "";
   }
 
   /**
