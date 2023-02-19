@@ -1,3 +1,226 @@
+body { 
+  margin: 0px; 
+  padding: 100px 0px 0px 0px; 
+  overflow: hidden; /* overflow: hidden prevents full scrollbar in IE */ 
+} 
+  
+div#header { 
+  /* you must include "div" for IE */ 
+  position: absolute; 
+  top:0px; 
+  left: 0px; 
+  width: 100%; 
+  height: 100px; 
+  background-color: #aabbff; 
+  overflow: hidden; 
+} 
+
+#boxTop{
+  box-sizing: border-box;
+  position: absolute;
+  width: 80%;
+  height: 5%;
+  left: -5%;
+  top: 0px;
+  background: #003B73;
+  border: 1px solid #003B73;
+  border-radius: 100px;
+}
+
+#boxBottom{
+  box-sizing: border-box;
+  position: absolute;
+  width: 100%;
+  height: 5%;
+  bottom: 0px;
+  background: #003B73;
+  border: 1px solid #003B73;
+}
+
+#notifications {
+  max-height: 300px;
+  overflow-y: scroll;
+}
+
+#introHeader { 
+  /* Welcome Patient */
+  font-family: 'Roboto';
+  font-size: 100px;
+  line-height: 5%;
+  padding-left: 2.5%; 
+  display: flex;
+  align-items: center;
+  color: #003B73;
+}
+
+#notifListHeader { 
+  font-family: 'Roboto';
+  font-style: normal;
+  font-size: 80px;
+  padding-left: 5%; 
+  line-height: 100%;
+  display: flex;
+  color: #0074B7;
+  margin-block-end: 0.1em;  
+}
+
+.notifElement { 
+  display: flex; 
+  flex-direction: row;
+}
+
+.medElement { 
+  display: flex; 
+  flex-direction: row;
+}
+
+.deleteSameLine { 
+  display: flex; 
+  flex-direction: row;
+}
+
+.front_photo { 
+  width: 100%; 
+  height: 300%; 
+  top: 0px;
+  align-self: center;
+  margin-bottom: 0em;
+}
+
+.intro { 
+  font-family: 'Roboto';
+  font-size: 125px;
+  padding-left: 5%; 
+  display: flex;
+  align-items: center;
+  color: #003B73;
+  margin-bottom: 0em;
+  margin-top: 0em;
+  font-weight: bold;
+}
+
+.description { 
+  font-family: 'Roboto';
+  font-size: 70px;
+  padding-left: 5%; 
+  padding-right: 5%; 
+  display: flex;
+  align-items: center;
+  color: #6C6C6C;
+  padding-top: 0px;
+  margin-bottom: 1em;
+  font-weight: bold;
+}
+
+.disclaimer { 
+  font-family: 'Roboto';
+  font-size: 15px;
+  padding-left: 5%; 
+  padding-right: 5%; 
+  display: flex;
+  align-items: center;
+  color: #000000;
+  padding-top: 0px;
+  font-weight: bold;
+}
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  height: 60px;
+  margin-left: 5%; 
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 50px;
+  width: 50px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px #2196F3;
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(50px);
+  -ms-transform: translateX(50px);
+  transform: translateX(50px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+
+/* Style the button that is used to open and close the collapsible content */
+.collapsible {
+  background-color: #eee;
+  color: #444;
+  cursor: pointer;
+  padding: 18px;
+  width: 100%;
+  border: none;
+  text-align: left;
+  outline: none;
+  font-size: 15px;
+}
+
+/* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+.active, .collapsible:hover {
+  background-color: #ccc;
+}
+
+/* Style the collapsible content. Note: hidden by default */
+.content {
+  padding: 0 18px;
+  display: none;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+.bottom_start { 
+  margin-top: 2em;
+  width: 90%; 
+  height: 300%; 
+  top: 0px;
+  padding-left: 5%;
+  align-self: center;
+  margin-bottom: 0em;
+}
+
 /* Include the padding and border in an element's total width and height */
 * {
     box-sizing: border-box;
@@ -109,8 +332,6 @@
     border-radius: 0;
   }
 
-  .rounded {
-  }
   
   .addBtn:hover {
     background-color: #bbb;
