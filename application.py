@@ -7,7 +7,7 @@ import openai
 
 
 #todo: make this an env var
-openai.api_key = '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'
+openai.api_key = os.getenv('openai_key')
 
 # print a nice greeting.
 def say_hello(username = "World"):
@@ -23,7 +23,7 @@ application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # rule for interactionToGPT
 application.add_url_rule('/interaction_to_gpt/<brands>', 'interactionToGPT', (lambda brands: interaction_to_gpt(brands)))
 def interaction_to_gpt(brands):
-    prompt = "explain to someone without a lot of experience with the medical system the harmful impacts of taking" + str(brands.split('+')) + "at the same time in 1 sentence"
+    prompt = "explain to someone without a lot of experience with the medical system the harmful impacts of taking" + str(brands.split('+')) + "at the same time in 1 sentence."
     response = openai.Completion.create(
         model="text-davinci-003",
         prompt=prompt,
