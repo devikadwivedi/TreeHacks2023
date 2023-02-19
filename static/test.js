@@ -17,12 +17,6 @@
     // on click of the add button
     let add_button = id("add_button");
     add_button.addEventListener("click", addItem);
-    if (getCookie("c") == "") {
-            document.cookie = "c=true;expires=" + expireDate();
-        }
-        if (getCookie("m") == "") {
-            document.cookie = "m=[];expires=" + expireDate();
-        }
     // just deal with the instance of adding one item to our table
     let generateButton = qs("button");
     generateButton.addEventListener("click", addItem);
@@ -33,6 +27,12 @@
     }
     if (getCookie("m") == "") {
         document.cookie = "m=[];expires=" + expireDate();
+    }
+
+    let arr = parseMedCookie();
+    for (let i = 0; i < arr.length; i++) {
+        getRxcui(arr[i].query);
+        addItemFromQuery(arr[i].query);
     }
     console.log(document.cookie);
   }
@@ -69,16 +69,16 @@
       return null;
     }
 
-    rxcuiArray.push(rxcui);
+    rxcuiArray.push({rxcui: rxcui, query: query});
     addMedCookie(rxcui, query);
     return rxcui;
   }
 
   async function getInteractions(query) {
     if (rxcuiArray.length > 1) {
-      let medication_string = rxcuiArray[0]
+      let medication_string = rxcuiArray[0].rxcui;
       for (let i = 1; i < rxcuiArray.length; i++) {
-        medication_string += "+" + rxcuiArray[i];
+        medication_string += "+" + rxcuiArray[i].rxcui;
       }
       let interaction_set = await getRxcuiToInteractions(medication_string);
 
@@ -149,7 +149,10 @@
       console.log("input rejected");
       return;
     }
+    addItemFromQuery(query);
+  }
 
+  async function addItemFromQuery(query) {
     // 2 check if the search is a generic name
     let rxcui = await getRxcui(query);
     if (rxcui === null) {
@@ -158,7 +161,7 @@
 
     //3 add to the table and clear search bar
     addToPage(query);
-    getInteractions(query)
+    getInteractions(query);
   }
 
   async function removeItem(rxcui) {
