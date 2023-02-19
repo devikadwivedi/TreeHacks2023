@@ -84,9 +84,12 @@
       return null;
     }
 
-    rxcuiArray.push({rxcui: rxcui, query: query});
-    addMedCookie(rxcui, query);
-    return rxcui;
+    if (rxcuiArray.filter(e => e.rxcui === rxcui).length == 0) {
+        rxcuiArray.push({rxcui: rxcui, query: query});
+        addMedCookie(rxcui, query);
+        return rxcui;
+    }
+    return null;
   }
 
   function clearMedications() {
@@ -231,7 +234,6 @@
   }
 
   function addMedCookie(rxcui, query) {
-    console.log(parseConsentCookie());
     if (parseConsentCookie()) {
         let arr = parseMedCookie();
         if (parseMedCookie().filter(e => e.rxcui === rxcui).length == 0) {
