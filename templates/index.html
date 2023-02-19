@@ -15,7 +15,7 @@
     <div id="" style="overflow-y:scroll; overflow-x:hidden; height:200px;">
       <ul id="notifications" style = "font-size: 60px; list-style-type: none;">
         <li class = "notifElement">
-            <img src = "../static/warning.png" class="icon" > </img>
+            <img src = "../static/Notify.png" class="icon" > </img>
             <div>
               No notifications at this time.
             </div>
@@ -26,54 +26,39 @@
 
     <div class = "deleteSameLine">
       <h1 id = "notifListHeader">List of Meds</h1>
-      <button style = "padding-left: 5%; padding-top: 8%" id="remove_all"> Remove all </button>
+      <button class = "button-8" id="remove_all"> Delete All </button>
     </div>
 
-x
     <div id="" style="overflow-y:scroll; overflow-x:hidden; height:200px;">
       <ul id="medications" style = "font-size: 60px; list-style-type: none;">
         <li class = "notifElement">
-            <img src = "../static/delete.png" class="icon" > </img>
+            <img src = "../static/Minus.png" class="icon" > </img>
             <div>
               No medications added at this time.
             </div>
         </li>
       </ul>
     </div>
-    <!--<img src="../static/delete.png" alt="Issue">-->
-    <p>"Medication #_"</p>
 
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data onsubmit="process_image">
-      <input type=file name=file id="upload-file">
-      <input type=submit value=Upload>
-    </form>
+    <div class = "uploadElement"> 
+ 
+      <form method=post enctype=multipart/form-data onsubmit="process_image">
+        <img src = "../static/Upload.png"> </img>
+        <input type=file name=file id="upload-file">
+        <input type=submit value=Upload>
+      </form>
 
-    <h1>Upload Medication Name</h1>
-    <form>
-      <div>
-        <input id="med-name" type="text" name="medication name" value="{{drug}}"/>
-      </div>
-      <div>
-        <input type="submit" value="Send"/>
-      </div>
-    </form>
-
-
-    <a href="#" onclick="window.print();return false;">Print page</a>
-
-    <p>"Medication #_"</p>
-
-    <main>
-        <section id="query_section">
-            <input type="text" id="search_bar" value="cymbalta" required minlength="0"
-            maxlength="25" size="10">
-            <button id="add_button">Add To List</button>
-        </section>
-
-    </main>
-
+      <main style = "padding-left: 5%; top: 90%; bottom: 0px">
+          <section id="query_section">
+              <input type="text" id="search_bar" value="cymbalta" required minlength="0"
+              maxlength="25" size="10">
+              <button id="add_button">Add To List</button>
+          </section>
+      </main>
     </div>
-    <div id = "boxBottom"> </div>
+
+    <a href="#" onclick="window.print();return false;"> <img id = "boxBottom" src = "../static/PrintButton.png"> </img>  </a>
+
+
   </body>
 </html>
