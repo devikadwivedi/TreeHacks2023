@@ -16,16 +16,12 @@
     let generateButton = qs("button");
     generateButton.addEventListener("click", addItem);
     //document.cookie = "m=[]";
+
     if (getCookie("c") == "") {
-        document.cookie = "c=true";
+        document.cookie = "c=true;expires=" + expireDate();
     }
     if (getCookie("m") == "") {
-        document.cookie = "m=[]";
-    }
-    if (getCookie("expires") == "") {
-        let date = new Date(Date.now());
-        let newDate = date.setFullYear(date.getFullYear() + 1);
-        document.cookie = "expires=" + date.toUTCString();
+        document.cookie = "m=[];expires=" + expireDate();
     }
     console.log(document.cookie);
   }
@@ -127,12 +123,12 @@
   }
 
   function setMedCookie(arr) {
-    document.cookie = "m=" + JSON.stringify(arr);
+    document.cookie = "m=" + JSON.stringify(arr) + ";expires=" + expireDate();
   }
 
   function setConsentCookie(consent) {
     if (typeof consent === 'boolean') {
-        document.cookie = "c=" + String(consent);
+        document.cookie = "c=" + String(consent) + "expires=" + expireDate();
         if (!consent) {
             // Remove all stored medical data if consent withdrawn
             removeAllMedCookie();
@@ -164,6 +160,12 @@
       }
     }
     return "";
+  }
+
+  function expireDate() {
+    let date = new Date(Date.now());
+    date.setFullYear(date.getFullYear() + 1);
+    return date.toUTCString();
   }
 
   /**
