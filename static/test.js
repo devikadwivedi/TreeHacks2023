@@ -108,10 +108,6 @@
     return rxcui;
   }
 
-
-
-
-
   /**
    * gives the user a helpful message if an error occurs while requesting
    */

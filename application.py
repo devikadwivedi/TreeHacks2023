@@ -1,17 +1,13 @@
-from flask import Flask, render_template
+from flask import Flask, flash, request, redirect, url_for
 import requests
 from PIL import Image
 from pyzbar.pyzbar import decode
 import os
 import openai
-
+from werkzeug.utils import secure_filename
 
 #todo: make this an env var
 openai.api_key = os.getenv('openai_key')
-
-# print a nice greeting.
-def say_hello(username = "World"):
-    return '<p>Hello %s!</p>\n' % username
 
 # EB looks for an 'application' callable by default.
 application = Flask(__name__)
@@ -120,13 +116,35 @@ def image_to_brand(image_name):
         print(response)
         return "error"
 
-# add a rule for the index page.
-application.add_url_rule('/', 'index', (lambda: render_template('index.html')))
 
-# add a rule when the page is accessed with a name appended to the site
-# URL.
-application.add_url_rule('/<username>', 'hello', (lambda username:
-    header_text + say_hello(username) + home_link + footer_text))
+def index():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # If the user does not select a file, the browser submits an
+        # empty file without a filename.
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return app.config["UPLOAD_FOLDER"] + filename
+    return '''
+    <!doctype html>
+    <title>Upload new File</title>
+    <h1>Upload new File</h1>
+    <form method=post enctype=multipart/form-data>
+      <input type=file name=file>
+      <input type=submit value=Upload>
+    </form>
+    '''
+
+# add a rule for the index page.
+application.add_url_rule('/','index', (lambda: index()), methods=['GET', 'POST'])
 
 # run the app.
 if __name__ == "__main__":
