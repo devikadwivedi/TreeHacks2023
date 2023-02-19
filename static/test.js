@@ -5,7 +5,7 @@
 "use strict";
 (function() {
   window.addEventListener("load", init);
-  const BASE_URL = "http://myrx-env.eba-d74spj7t.us-west-2.elasticbeanstalk.com/";
+  const BASE_URL = "http://127.0.0.1:5000/";
   let rxcuiArray = [];
 
   /**
@@ -81,12 +81,28 @@
         medication_string += "+" + rxcuiArray[i];
       }
       let interaction_set = await getRxcuiToInteractions(medication_string);
-      for (let i = 0; i < length(interaction_set); i++) {
+      let notifications = id("notifications");
+
+      if (interaction_set.length < 1) {
+        // no interactions:
+        let listElement = gen("li");
+        listElement.classList.add("notifElement");
+
+        let newImage = gen("img");
+        newImage.src = "/static/warning.png";
+        newImage.alt = "photo of exclamation mark";
+        newImage.classList.add("icon");
+
+        let newDiv = gen("div");
+        newDiv.innerHTML = "No notifications at this time";
+        listElement.appendChild(newImage);
+        listElement.appendChild(newDiv);
+        notifications.appendChild(listElement);
+        return;
+      }
+      notifications.innerHTML = "";
+      for (let i = 1; i < interaction_set.length; i++) {
         // put into the page
-        let notifications = id("notifications");
-        if (interaction_set === undefined) {
-          return;
-        }
         let listElement = gen("li");
         listElement.classList.add("notifElement");
 
@@ -168,8 +184,8 @@
         interaction_set = resp;
         })
       .catch(handleError);
-      console.log("getRxcuiToInteractions returns: " + JSON.parse(interaction_set)['interactions']);
-      return JSON.parse(interaction_set)['interactions'];
+      let myArray = interaction_set.split("@");
+      return myArray;
   }
 
   function addMedCookie(rxcui, query) {
