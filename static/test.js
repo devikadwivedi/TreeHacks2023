@@ -248,3 +248,12 @@
   }
 
 })();
+
+
+async function process_image() {
+  const file = document.getElementById("upload-file").value
+  // send this file to your api
+  const response = await makeRequest(file)
+  const medName = response.json().med_name
+  document.getElementById("med-name").value = medName
+}
