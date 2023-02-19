@@ -5,7 +5,7 @@
 "use strict";
 (function() {
   window.addEventListener("load", init);
-  const BASE_URL = "http://127.0.0.1:5000/";
+  const BASE_URL = "http://myrx-env.eba-d74spj7t.us-west-2.elasticbeanstalk.com/";
   let rxcuiArray = [];
 
   /**
