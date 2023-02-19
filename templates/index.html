@@ -22,14 +22,10 @@
         </li>
       </ul>
     </div>
-
-
     <div class = "deleteSameLine">
       <h1 id = "notifListHeader">List of Meds</h1>
       <button style = "padding-left: 5%; padding-top: 8%" id="remove_all"> Remove all </button>
     </div>
-
-x
     <div id="" style="overflow-y:scroll; overflow-x:hidden; height:200px;">
       <ul id="medications" style = "font-size: 60px; list-style-type: none;">
         <li class = "notifElement">
@@ -40,30 +36,13 @@ x
         </li>
       </ul>
     </div>
-    <!--<img src="../static/delete.png" alt="Issue">-->
-    <p>"Medication #_"</p>
-
     <h1>Upload new File</h1>
     <form method=post enctype=multipart/form-data onsubmit="process_image">
       <input type=file name=file id="upload-file">
       <input type=submit value=Upload>
     </form>
 
-    <h1>Upload Medication Name</h1>
-    <form>
-      <div>
-        <input id="med-name" type="text" name="medication name" value="{{drug}}"/>
-      </div>
-      <div>
-        <input type="submit" value="Send"/>
-      </div>
-    </form>
-
-
     <a href="#" onclick="window.print();return false;">Print page</a>
-
-    <p>"Medication #_"</p>
-
     <main>
         <section id="query_section">
             <input type="text" id="search_bar" value="cymbalta" required minlength="0"
