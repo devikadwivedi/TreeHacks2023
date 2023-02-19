@@ -79,6 +79,11 @@
     }
   }
 
+  async function removeItem(rxcui) {
+    rxcuiArray = rxcuiArray.filter(e => e.rxcui !== rxcui);
+    removeMedCookie(rxcui);
+  }
+
   async function getRxcuiToInteractions(rxcuis) {
     let url = BASE_URL + "/rxcuis_to_interactions/" + rxcuis;
     console.log(url);
