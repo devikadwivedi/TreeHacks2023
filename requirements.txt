@@ -2,3 +2,4 @@ requests
 flask
 pillow
 pyzbar
+openai

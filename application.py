@@ -3,6 +3,11 @@ import requests
 from PIL import Image
 from pyzbar.pyzbar import decode
 import os
+import openai
+
+
+#todo: make this an env var
+openai.api_key = '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'
 
 # print a nice greeting.
 def say_hello(username = "World"):
@@ -13,6 +18,23 @@ application = Flask(__name__)
 UPLOAD_FOLDER = 'static/image_uploads/'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'heic'}
 application.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+
+# rule for interactionToGPT
+application.add_url_rule('/interaction_to_gpt/<brands>', 'interactionToGPT', (lambda brands: interaction_to_gpt(brands)))
+def interaction_to_gpt(brands):
+    prompt = "explain to someone without a lot of experience with the medical system the harmful impacts of taking" + str(brands.split('+')) + "at the same time in 1 sentence"
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=prompt,
+        temperature=0.7,
+        max_tokens=256,
+        top_p=1,
+        frequency_penalty=0,
+        presence_penalty=0
+    )
+    print(response['choices'][0]['text'].replace('\n', ''))
+    return response['choices'][0]['text'].replace('\n', '')
 
 
 # rule for rxcuiToInteraction
